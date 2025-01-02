@@ -1,0 +1,52 @@
+---
+- name: Installation du Oneagent
+  hosts: all
+  tasks: 
+
+- name: Télécharger le fichier d'installation Dynatrace
+  ansible.builtin.get_url:
+    url: "https://dtk94502.live.dynatrace.com/api/v1/deployment/installer/agent/unix/default/latest?arch=x86"
+    dest: "/tmp/Dynatrace-OneAgent-Linux-1.303.62.20241129-131342.sh"
+    headers:
+      Authorization: "Api-Token dt0c01.S7JESDKOWJGSNMAIQFHNHCMG.HHBEKVZEIPK4UAWV7QWUGXKOFH44UQJY3Q464IPXDW62VW3R65U4UGAPVLHU5GTW"
+    force: yes
+  register: download_status
+
+- name: Télécharger le certificat racine Dynatrace
+  ansible.builtin.get_url:
+    url: "https://ca.dynatrace.com/dt-root.cert.pem"
+    dest: "/tmp/dt-root.cert.pem"
+    force: yes
+
+- name: Vérifier la signature du script Dynatrace
+  ansible.builtin.shell: |
+    (
+      echo 'Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="--SIGNED-INSTALLER"';
+      echo;
+      echo;
+      echo '----SIGNED-INSTALLER';
+      cat /tmp/Dynatrace-OneAgent-Linux-1.303.62.20241129-131342.sh
+    ) | openssl cms -verify -CAfile /tmp/dt-root.cert.pem > /dev/null
+  args:
+    executable: /bin/bash
+  register: signature_status
+  ignore_errors: no
+
+- name: Échouer si la vérification de la signature échoue
+  ansible.builtin.fail:
+    msg: "La vérification de la signature a échoué."
+  when: signature_status.rc != 0
+
+- name: Échouer si la vérification de la signature échoue
+  ansible.builtin.fail:
+    msg: "La vérification de la signature a échoué."
+  when: signature_status.rc != 0
+
+- name: Exécuter le fichier d'installation avec root
+  ansible.builtin.command: >
+    /bin/sh /tmp/Dynatrace-OneAgent-Linux-1.303.62.20241129-131342.sh
+    --set-monitoring-mode=fullstack --set-app-log-content-access=true
+  become: yes
+  become_user: root
+  when: signature_status.rc == 0
+
