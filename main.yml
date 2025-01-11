@@ -4,10 +4,10 @@
   tasks:
     - name: Télécharger le fichier d'installation Dynatrace
       ansible.builtin.get_url:
-        url: "https://dtk94502.live.dynatrace.com/api/v1/deployment/installer/agent/unix/default/latest?arch=x86"
+        url: "https://hvu79283.live.dynatrace.com/api/v1/deployment/installer/agent/unix/default/latest?arch=x86"
         dest: "/tmp/Dynatrace-OneAgent-Linux-1.303.62.20241129-131342.sh"
         headers:
-          Authorization: "Api-Token dt0c01.S7JESDKOWJGSNMAIQFHNHCMG.HHBEKVZEIPK4UAWV7QWUGXKOFH44UQJY3Q464IPXDW62VW3R65U4UGAPVLHU5GTW"
+          Authorization: "Api-Token dt0c01.53GWM777BS33GN4JQ6XCLOBH.ISWGPPKUVKUV4GG7CDGHT4IPN5UT3TQ6RDGMCHMRUXORVW73WRVQE4Q5GX6ATZJJ"
         force: yes
       register: download_status
 
