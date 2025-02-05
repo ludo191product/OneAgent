@@ -6,10 +6,10 @@
     dynatrace_environment_id: "votre-environment-id"
     dynatrace_api_token: "votre-api-token"
     vm_list:
-      - { name: "VM1", tag: "AP-VM1" }
-      - { name: "VM2", tag: "AP-VM2" }
-      - { name: "VM3", tag: "AP-VM3" }
-      - { name: "VM4", tag: "AP-VM4" }
+      - { name: "VM1", code: "AP-VM1" }
+      - { name: "VM2", code: "AP-VM2" }
+      - { name: "VM3", code: "AP-VM3" }
+      - { name: "VM4", code: "AP-VM4" }
 
   tasks:
     - name: Créer des tags automatiques pour chaque VM
@@ -24,24 +24,28 @@
             "schemaId": "builtin:tags.auto-tagging",
             "scope": "environment",
             "value": {
-              "name": "{{ item.tag }}",
+              "name": "[Environnement] Code",
               "description": "Tag automatique pour {{ item.name }}",
               "rules": [
                 {
                   "enabled": true,
-                  "entitySelector": "type(\"PROCESS_GROUP_INSTANCE\"),fromRelationship.isProcessOf(type(\"HOST\"),entityName(\"{{ item.name }}\"))"
+                  "entitySelector": "type(\"PROCESS_GROUP_INSTANCE\"),fromRelationship.isProcessOf(type(\"HOST\"),entityName(\"{{ item.name }}\"))",
+                  "valueFormat": "{{ item.code }}"
                 },
                 {
                   "enabled": true,
-                  "entitySelector": "type(\"SERVICE\"),fromRelationships.runsOnHost(type(\"HOST\"),entityName(\"{{ item.name }}\"))"
+                  "entitySelector": "type(\"SERVICE\"),fromRelationships.runsOnHost(type(\"HOST\"),entityName(\"{{ item.name }}\"))",
+                  "valueFormat": "{{ item.code }}"
                 },
                 {
                   "enabled": true,
-                  "entitySelector": "type(\"HOST\"),entityName.contains(\"{{ item.name }}\")"
+                  "entitySelector": "type(\"HOST\"),entityName.contains(\"{{ item.name }}\")",
+                  "valueFormat": "{{ item.code }}"
                 },
                 {
                   "enabled": true,
-                  "entitySelector": "type(\"WEB_APPLICATION\"),entityName.contains(\"{{ item.name | lower }}\")"
+                  "entitySelector": "type(\"WEB_APPLICATION\"),entityName.contains(\"{{ item.name | lower }}\")",
+                  "valueFormat": "{{ item.code }}"
                 }
               ]
             }
