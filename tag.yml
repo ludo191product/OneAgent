@@ -7,7 +7,6 @@
     dynatrace_api_token: "votre-api-token"
     vm_list:
       - { name: "VM1", code: "AP-VM1" }
-      - { name: "VM2", code: "AP-VM2" }
       - { name: "VM3", code: "AP-VM3" }
       - { name: "VM4", code: "AP-VM4" }
 
