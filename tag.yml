@@ -1,6 +1,6 @@
 ---
 - name: Création de tags automatiques sur Dynatrace
-  hosts: localhost
+  hosts: localhost 
   gather_facts: no
   vars:
     dynatrace_environment_id: "votre-environment-id"
