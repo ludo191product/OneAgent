@@ -1,12 +1,13 @@
 ---
 - name: Création de tags automatiques sur Dynatrace
-  hosts: localhost 
+  hosts: localhost
   gather_facts: no
   vars:
     dynatrace_environment_id: "votre-environment-id"
     dynatrace_api_token: "votre-api-token"
     vm_list:
       - { name: "VM1", code: "AP-VM1" }
+      - { name: "VM2", code: "AP-VM2" }
       - { name: "VM3", code: "AP-VM3" }
       - { name: "VM4", code: "AP-VM4" }
 
@@ -24,27 +25,35 @@
             "scope": "environment",
             "value": {
               "name": "[Environnement] Code",
-              "description": "Tag automatique pour {{ item.name }}",
+              "description": "Tag automatique pour {{ item.code }}",
               "rules": [
                 {
                   "enabled": true,
-                  "entitySelector": "type(\"PROCESS_GROUP_INSTANCE\"),fromRelationship.isProcessOf(type(\"HOST\"),entityName(\"{{ item.name }}\"))",
-                  "valueFormat": "{{ item.code }}"
+                  "type": "SELECTOR",
+                  "valueFormat": "{{ item.code }}",
+                  "valueNormalization": "Leave text as-is",
+                  "entitySelector": "type(\"PROCESS_GROUP_INSTANCE\"),fromRelationships.isProcessOf(type(\"HOST\"),entityName(\"{{ item.name }}\"))"
                 },
                 {
                   "enabled": true,
-                  "entitySelector": "type(\"SERVICE\"),fromRelationships.runsOnHost(type(\"HOST\"),entityName(\"{{ item.name }}\"))",
-                  "valueFormat": "{{ item.code }}"
+                  "type": "SELECTOR",
+                  "valueFormat": "{{ item.code }}",
+                  "valueNormalization": "Leave text as-is",
+                  "entitySelector": "type(\"SERVICE\"),fromRelationships.runsOnHost(type(\"HOST\"),entityName(\"{{ item.name }}\"))"
                 },
                 {
                   "enabled": true,
-                  "entitySelector": "type(\"HOST\"),entityName.contains(\"{{ item.name }}\")",
-                  "valueFormat": "{{ item.code }}"
+                  "type": "SELECTOR",
+                  "valueFormat": "{{ item.code }}",
+                  "valueNormalization": "Leave text as-is",
+                  "entitySelector": "type(\"HOST\"),entityName.contains(\"{{ item.name }}\")"
                 },
                 {
                   "enabled": true,
-                  "entitySelector": "type(\"WEB_APPLICATION\"),entityName.contains(\"{{ item.name | lower }}\")",
-                  "valueFormat": "{{ item.code }}"
+                  "type": "SELECTOR",
+                  "valueFormat": "{{ item.code }}",
+                  "valueNormalization": "Leave text as-is",
+                  "entitySelector": "type(\"APPLICATION\"),entityName.contains(\"{{ item.name | lower }}\")"
                 }
               ]
             }
