@@ -41,4 +41,4 @@
               name: "[Environnement] Code"
               description: "Tag automatique basé sur les VM"
               rules: "{{ tag_rules }}"
-        status_code: 201
+        status_code: 200
